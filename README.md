@@ -1,11 +1,11 @@
-# n8n-nodes-pumble
+# n8n-nodes-pumble-integration
 
-[![npm version](https://img.shields.io/npm/v/n8n-nodes-pumble?color=cb3837&logo=npm&label=npm)](https://www.npmjs.com/package/n8n-nodes-pumble)
+[![npm version](https://img.shields.io/npm/v/n8n-nodes-pumble-integration?color=cb3837&logo=npm&label=npm)](https://www.npmjs.com/package/n8n-nodes-pumble-integration)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 [![CI](https://github.com/EdordoPng/n8n-nodes-pumble/actions/workflows/ci.yml/badge.svg)](https://github.com/EdordoPng/n8n-nodes-pumble/actions/workflows/ci.yml)
 [![n8n compatibility](https://img.shields.io/badge/n8n-%3E%3D2.11.2-FF6B6B?logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSIzIiBmaWxsPSIjRkY2QjZCIi8+PC9zdmc+)](https://docs.n8n.io/integrations/community-nodes/)
 
-**n8n-nodes-pumble** is a community node that integrates [Pumble](https://pumble.com) — a free team messaging and collaboration platform — directly into your [n8n](https://n8n.io/) workflows.
+**n8n-nodes-pumble-integration** is a community node that integrates [Pumble](https://pumble.com) — a free team messaging and collaboration platform — directly into your [n8n](https://n8n.io/) workflows.
 
 With this node you can automate your entire Pumble workspace: send and schedule messages to channels, manage threads and direct messages, create and configure channels, and query workspace users and groups — all without leaving n8n.
 
@@ -43,7 +43,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 1. Go to **Settings → Community Nodes**
 2. Select **Install**
-3. Enter `n8n-nodes-pumble` and confirm
+3. Enter `n8n-nodes-pumble-integration` and confirm
 
 The node will be available in your workflow editor under the **Pumble** category.
 
@@ -63,16 +63,16 @@ The node will be available in your workflow editor under the **Pumble** category
 
 ### Message
 
-| Operation        | Description |
-|------------------|-------------|
-| Send             | Post a new message to a channel |
-| Edit             | Update the text of an existing message |
-| Delete           | Remove a message from a channel |
-| Get              | Retrieve a specific message by ID |
-| Get Many         | List messages in a channel |
-| Send Reply       | Reply to an existing message inside its thread |
+| Operation          | Description |
+|--------------------|-------------|
+| Send               | Post a new message to a channel |
+| Edit               | Update the text of an existing message |
+| Delete             | Remove a message from a channel |
+| Get                | Retrieve a specific message by ID |
+| Get Many           | List messages in a channel |
+| Send Reply         | Reply to an existing message inside its thread |
 | Get Thread Replies | Retrieve all replies in a message thread |
-| Search           | Search for messages in the workspace by keyword |
+| Search             | Search for messages in the workspace by keyword |
 
 ### Channel
 
@@ -86,18 +86,18 @@ The node will be available in your workflow editor under the **Pumble** category
 
 ### Direct Message
 
-| Operation       | Description |
-|-----------------|-------------|
-| Send            | Send a direct message to a single user |
-| Send to Group   | Send a message to a group of users via a group DM |
+| Operation     | Description |
+|---------------|-------------|
+| Send          | Send a direct message to a single user |
+| Send to Group | Send a message to a group of users via a group DM |
 
 ### User
 
-| Operation        | Description |
-|------------------|-------------|
-| Get Many         | Retrieve all users in the workspace |
-| Get Me           | Retrieve the profile of the authenticated user |
-| Get User Groups  | Retrieve all user groups (teams) in the workspace |
+| Operation       | Description |
+|-----------------|-------------|
+| Get Many        | Retrieve all users in the workspace |
+| Get Me          | Retrieve the profile of the authenticated user |
+| Get User Groups | Retrieve all user groups (teams) in the workspace |
 
 ---
 
@@ -117,13 +117,13 @@ To authenticate with Pumble you need an **API Key** tied to your workspace:
 
 ## Compatibility
 
-| Property | Value |
-|----------|-------|
+| Property            | Value |
+|---------------------|-------|
 | Minimum n8n version | `2.11.2` |
-| Tested against | n8n `2.11.2` (self-hosted) |
-| Node.js | `v22+` |
-| Package manager | `pnpm` |
-| Language | TypeScript |
+| Tested against      | n8n `2.11.2` (self-hosted) |
+| Node.js             | `v22+` |
+| Package manager     | `pnpm` |
+| Language            | TypeScript |
 
 > ⚠️ **Important — `sendAt` field:** The Pumble API expects scheduled message timestamps in **milliseconds** (e.g. `1714000000000`), not Unix seconds and not ISO 8601 strings. This node handles the conversion automatically, applying the timezone offset from the n8n server's configured timezone. No manual conversion is required on your end.
 
@@ -150,6 +150,7 @@ pnpm build
 
 # 4. (Optional) Watch mode for development
 pnpm dev
+
 ```
 
 ### Submitting a pull request
