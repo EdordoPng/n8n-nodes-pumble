@@ -6,7 +6,6 @@ import type {
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
-// Import only the shared helper — URL and credential name are encapsulated there
 import { pumbleApiRequest } from '../../GenericFunctions';
 
 // ── UI Parameters ──────────────────────────────────────────────────────────
@@ -43,6 +42,19 @@ export const description: INodeProperties[] = [
         description: 'The text content of the message',
     },
     {
+        displayName: 'Send As Bot',
+        name: 'asBot',
+        type: 'boolean',
+        default: false,
+        displayOptions: {
+            show: {
+                resource: ['message'],
+                operation: ['send'],
+            },
+        },
+        description: 'Whether to post the message as the Addon Bot identity instead of the authenticated user. Note: bots cannot post to private channels.',
+    },
+    {
         displayName: 'Additional Fields',
         name: 'additionalFields',
         type: 'collection',
@@ -67,8 +79,6 @@ export const description: INodeProperties[] = [
 ];
 
 // ── Execute Function ───────────────────────────────────────────────────────
-// Called once per input item (index i). n8n loops over items externally —
-// this function must NOT loop, recurse, or call itself.
 export async function execute(
     this: IExecuteFunctions,
     i: number,
@@ -76,11 +86,12 @@ export async function execute(
 
     const channelId = this.getNodeParameter('channelId', i, '') as string;
     const text = this.getNodeParameter('text', i, '') as string;
+    // ✅ FIX: lettura del parametro asBot
+    const asBot = this.getNodeParameter('asBot', i, false) as boolean;
     const additionalFields = this.getNodeParameter(
         'additionalFields', i, {},
     ) as IDataObject;
 
-    // Validate required fields before making any HTTP call
     if (!channelId.trim()) {
         throw new NodeOperationError(this.getNode(), 'Channel ID cannot be empty.', { itemIndex: i });
     }
@@ -90,7 +101,11 @@ export async function execute(
 
     const body: IDataObject = { channelId, text };
 
-    // Handle optional JSON attachments safely
+    // ✅ FIX: aggiunta al body solo se true (evita di mandare asBot: false inutilmente)
+    if (asBot) {
+        body.asBot = true;
+    }
+
     if (additionalFields.attachments !== undefined) {
         let attachments: unknown;
         try {
@@ -115,7 +130,6 @@ export async function execute(
         body.attachments = attachments as IDataObject[];
     }
 
-    // Single clean call — URL, credential, and error wrapping are in GenericFunctions.ts
     const responseData = await pumbleApiRequest.call(this, 'POST', '/sendMessage', body);
 
     return this.helpers.constructExecutionMetaData(

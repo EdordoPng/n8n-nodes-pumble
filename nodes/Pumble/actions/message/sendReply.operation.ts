@@ -38,7 +38,6 @@ export const description: INodeProperties[] = [
         },
         default: '',
         placeholder: 'MSG1234567890',
-        // This is the parent message that starts the thread
         description: 'The ID of the parent message to reply to (thread root)',
     },
     {
@@ -56,6 +55,19 @@ export const description: INodeProperties[] = [
         default: '',
         placeholder: 'Thanks for the update!',
         description: 'The text content of the reply',
+    },
+    {
+        displayName: 'Send As Bot',
+        name: 'asBot',
+        type: 'boolean',
+        default: false,
+        displayOptions: {
+            show: {
+                resource: ['message'],
+                operation: ['sendReply'],
+            },
+        },
+        description: 'Whether to post the reply as the Addon Bot identity instead of the authenticated user. Note: bots cannot reply in private channels.',
     },
     {
         displayName: 'Additional Fields',
@@ -82,8 +94,6 @@ export const description: INodeProperties[] = [
 ];
 
 // ── Execute Function ───────────────────────────────────────────────────────
-// Called once per input item (index i). n8n loops over items externally —
-// this function must NOT loop, recurse, or call itself.
 export async function execute(
     this: IExecuteFunctions,
     i: number,
@@ -92,36 +102,27 @@ export async function execute(
     const channelId = this.getNodeParameter('channelId', i, '') as string;
     const messageId = this.getNodeParameter('messageId', i, '') as string;
     const text      = this.getNodeParameter('text', i, '') as string;
+    const asBot     = this.getNodeParameter('asBot', i, false) as boolean;
     const additionalFields = this.getNodeParameter(
         'additionalFields', i, {},
     ) as IDataObject;
 
-    // Validate all required fields before making any HTTP call
     if (!channelId.trim()) {
-        throw new NodeOperationError(
-            this.getNode(),
-            'Channel ID cannot be empty.',
-            { itemIndex: i },
-        );
+        throw new NodeOperationError(this.getNode(), 'Channel ID cannot be empty.', { itemIndex: i });
     }
     if (!messageId.trim()) {
-        throw new NodeOperationError(
-            this.getNode(),
-            'Message ID cannot be empty.',
-            { itemIndex: i },
-        );
+        throw new NodeOperationError(this.getNode(), 'Message ID cannot be empty.', { itemIndex: i });
     }
     if (!text.trim()) {
-        throw new NodeOperationError(
-            this.getNode(),
-            'Text cannot be empty.',
-            { itemIndex: i },
-        );
+        throw new NodeOperationError(this.getNode(), 'Text cannot be empty.', { itemIndex: i });
     }
 
     const body: IDataObject = { channelId, messageId, text };
 
-    // Handle optional JSON attachments safely
+    if (asBot) {
+        body.asBot = true;
+    }
+
     if (additionalFields.attachments !== undefined) {
         let attachments: unknown;
         try {
@@ -146,12 +147,7 @@ export async function execute(
         body.attachments = attachments as IDataObject[];
     }
 
-    const responseData = await pumbleApiRequest.call(
-        this,
-        'POST',
-        '/sendReply',
-        body,
-    );
+    const responseData = await pumbleApiRequest.call(this, 'POST', '/sendReply', body);
 
     return this.helpers.constructExecutionMetaData(
         this.helpers.returnJsonArray(responseData),
